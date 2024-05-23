@@ -109,13 +109,23 @@ public class InputScreen extends JPanel implements ActionListener{
             Transition.transitionToMainMenu(this);
         }
         else if(e.getSource() == submitButton){
-            int[] values = new int[1 << numberOfVariables];
-            for (int i = 0; i < 1 << numberOfVariables; i++) {
-                values[i] = valueBoxes[i].isSelected() ? 1 : 0;
+            int numOfVals = 0;
+            for(int i = 0; i < valueBoxes.length; i++){
+                if(valueBoxes[i].isSelected()){
+                    numOfVals++;
+                }
             }
-            new CalculateStyle();
+            int[] values = new int[numOfVals];
+            int index = 0;
+            for(int i = 0; i < valueBoxes.length; i++){
+                if(valueBoxes[i].isSelected()){
+                    values[index] = i;
+                    index++;
+                }
+            }
+            System.out.println(Arrays.toString(values));
             Transition.values = values;
-            System.out.println("Values: " + Arrays.toString(values));
+            new CalculateStyle();
             Transition.transitionToOutputScreen(this);
         }
     }
