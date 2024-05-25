@@ -8,10 +8,11 @@ import java.util.Set;
 public class PITable {
     // private int numOfBits = 4;
     public static void main(String[] args) {
-        Set<Integer> minterm = new HashSet<>(Set.of(4, 8, 9, 10, 11, 12, 14, 15));
+        Set<Integer> minterm = new HashSet<>(Set.of(0, 2, 4, 5, 6, 8, 10, 13, 14));
         // Set<Integer> minterm = new HashSet<>(Set.of(0, 1, 2, 5, 6, 7));
         List<Set<Integer>> primeImplicants = new ArrayList<>();
-        /* 
+        
+        /*
         primeImplicants.add(new HashSet<>(Set.of(0, 1)));
         primeImplicants.add(new HashSet<>(Set.of(0, 2)));
         primeImplicants.add(new HashSet<>(Set.of(1, 5)));
@@ -19,11 +20,12 @@ public class PITable {
         primeImplicants.add(new HashSet<>(Set.of(5, 7)));
         primeImplicants.add(new HashSet<>(Set.of(6, 7)));
         */
-
-        primeImplicants.add(new HashSet<>(Set.of(4, 12)));
-        primeImplicants.add(new HashSet<>(Set.of(8, 9, 10, 11)));
-        primeImplicants.add(new HashSet<>(Set.of(8, 10, 12, 14)));
-        primeImplicants.add(new HashSet<>(Set.of(10, 11, 14, 15)));
+        
+        primeImplicants.add(new HashSet<>(Set.of(0, 2, 4, 6)));
+        primeImplicants.add(new HashSet<>(Set.of(0, 2, 8, 10)));
+        primeImplicants.add(new HashSet<>(Set.of(2, 6, 10, 14)));
+        primeImplicants.add(new HashSet<>(Set.of(4, 5)));
+        primeImplicants.add(new HashSet<>(Set.of(5, 13)));
 
         Set<Integer> essentialIndices = findEssentialPrimeImplicants(primeImplicants, minterm);
 
@@ -48,10 +50,11 @@ public class PITable {
 
         Set<Integer> finalIndices = findMinimumPrimeImplicants(primeImplicants, minterm, essentialIndices);
 
-        if (essentialIndices.isEmpty()) {
+        // use the indices to print the prime implicants
+        if (finalIndices.isEmpty()) {
             System.out.println("Cannot find prime implicants!!");
         } else {
-            System.out.println("Selected Implicants:");
+            System.out.println("Final Implicants:");
             for (Integer index : finalIndices) {
                 finalImplicants.add(primeImplicants.get(index));
             }
@@ -137,18 +140,41 @@ public class PITable {
         for (Integer implicantIndex : essentialPrimeImplicants) {
             Set<Integer> implicant = primeImplicants.get(implicantIndex);
             uncoveredMinterms.removeAll(implicant);
-        }   
+        }
     
         // Find additional prime implicants to cover the uncovered minterms
-        for (Integer minterm : uncoveredMinterms) {
+        while (!uncoveredMinterms.isEmpty()) {
+            int maxCoveredMinterms = 0;
+            Integer selectedImplicant = null;
+    
+            // Iterate through prime implicants to find the one covering the maximum number of uncovered minterms
             for (int i = 0; i < primeImplicants.size(); i++) {
-                if (primeImplicants.get(i).contains(minterm)) {
-                    System.out.print(i);
-                    additionalPrimeImplicants.add(i);
-                    break;
+                if (additionalPrimeImplicants.contains(i)) {
+                    continue; // Skip implicants already selected
+                }
+    
+                Set<Integer> implicant = primeImplicants.get(i);
+                int coveredMinterms = 0;
+                for (Integer minterm : uncoveredMinterms) {
+                    if (implicant.contains(minterm)) {
+                        coveredMinterms++;
+                    }
+                }
+    
+                if (coveredMinterms > maxCoveredMinterms) {
+                    maxCoveredMinterms = coveredMinterms;
+                    selectedImplicant = i;
                 }
             }
-            System.out.println("");
+    
+            if (selectedImplicant != null) {
+                additionalPrimeImplicants.add(selectedImplicant);
+                Set<Integer> implicant = primeImplicants.get(selectedImplicant);
+                uncoveredMinterms.removeAll(implicant);
+            } else {
+                // If no implicant can cover more minterms, exit the loop
+                break;
+            }
         }
     
         return additionalPrimeImplicants;
