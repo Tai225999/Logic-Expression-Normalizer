@@ -1,5 +1,7 @@
 package UI;
 
+import Algorithm.column.ColumnTable;
+
 import javax.swing.*;
 
 public class Transition {
@@ -20,10 +22,12 @@ public class Transition {
         window.add(new MainMenu());
     }
 
-    public static void transitionToOutputScreen(JPanel panel) {
+    public static void transitionToOutputScreen(JPanel panel, int numOfBits) {
+        ColumnTable table = new ColumnTable(numOfBits, values);
+        table.printPrimeImplicants();
         panel.setVisible(false);
         Window window = (Window) SwingUtilities.getWindowAncestor(panel);
         window.getContentPane().remove(panel);
-        window.add(new OutputScreen());
+        window.add(new OutputScreen(table));
     }
 }

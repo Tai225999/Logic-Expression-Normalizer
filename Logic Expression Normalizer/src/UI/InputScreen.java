@@ -17,7 +17,7 @@ public class InputScreen extends JPanel implements ActionListener{
     public InputScreen(int numberOfVariables){
         super();
         this.numberOfVariables = numberOfVariables;
-        this.setBackground(Color.GRAY);
+        this.setBackground(Color.LIGHT_GRAY);
         this.setBounds(0,0, Constants.WindowConstants.WINDOW_WIDTH, Constants.WindowConstants.WINDOW_HEIGHT);
         this.setLayout(new BoxLayout(this, BoxLayout.X_AXIS));
 
@@ -63,7 +63,7 @@ public class InputScreen extends JPanel implements ActionListener{
 
         JPanel buttonPanel = new JPanel();
         buttonPanel.setLayout(new BoxLayout(buttonPanel, BoxLayout.Y_AXIS));
-        buttonPanel.setBackground(Color.GRAY);
+        buttonPanel.setBackground(Color.LIGHT_GRAY);
 
         Dimension buttonSize = new Dimension(Constants.WindowConstants.WINDOW_WIDTH/5, Constants.WindowConstants.WINDOW_HEIGHT/10);
 
@@ -126,7 +126,7 @@ public class InputScreen extends JPanel implements ActionListener{
             System.out.println(Arrays.toString(values));
             Transition.values = values;
             new CalculateStyle();
-            Transition.transitionToOutputScreen(this);
+            Transition.transitionToOutputScreen(this, numberOfVariables);
         }
     }
 }

@@ -13,9 +13,12 @@ public class CalculateStyle extends JDialog implements ActionListener {
         this.setLayout(new FlowLayout(FlowLayout.CENTER, 10, 10));
         this.setResizable(false);
         this.setModal(true);
+        this.setLocationRelativeTo(null);
 
         JButton sopButton = new JButton("SOP");
         sopButton.addActionListener(this);
+        sopButton.setBackground(Color.gray);
+        sopButton.setForeground(Color.white);
         sopButton.setPreferredSize(new Dimension(200, 100));
         sopButton.setMinimumSize(new Dimension(200, 100));
         sopButton.setMaximumSize(new Dimension(200, 100));
@@ -24,6 +27,8 @@ public class CalculateStyle extends JDialog implements ActionListener {
 
         JButton posButton = new JButton("POS");
         posButton.addActionListener(this);
+        posButton.setBackground(Color.gray);
+        posButton.setForeground(Color.white);
         posButton.setPreferredSize(new Dimension(200, 100));
         posButton.setMinimumSize(new Dimension(200, 100));
         posButton.setMaximumSize(new Dimension(200, 100));

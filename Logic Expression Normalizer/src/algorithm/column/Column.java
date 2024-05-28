@@ -1,5 +1,5 @@
-package algorithm.column;
-import algorithm.Minterm;
+package Algorithm.column;
+import Algorithm.Minterm;
 
 import java.util.ArrayList;
 import java.util.HashSet;
@@ -36,6 +36,15 @@ public class Column {
         
         // If reached here, all inner lists are empty
         return true;
+    }
+
+    public List<List<Minterm>> getTable() {
+        return table;
+    }
+
+    public int getTableYSize(){
+        if (table.isEmpty()) return 0;
+        return table.get(0).size();
     }
 
     public List<Minterm> getTempPrimeImplicants() {
