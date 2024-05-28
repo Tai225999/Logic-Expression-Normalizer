@@ -49,7 +49,8 @@ public class QuineMccluskey {
     }
     public static void main(String[] args) {
 
-        int[] values = new int[]{0, 2, 4, 5, 6, 8, 10, 13, 14};
+        int[] values = new int[]{1, 2, 4, 5, 7};
+        // int[] values = new int[]{0, 2, 4, 5, 6, 8, 10, 13, 14};
         // int[] values = new int[]{0, 1, 2, 5, 6, 7};
         // int[] values = new int[]{0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15};
         // int[] values = new int[]{};
