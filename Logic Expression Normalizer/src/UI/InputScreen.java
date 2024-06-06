@@ -1,97 +1,100 @@
 package UI;
 
 import Constants.WindowConstants;
-
-import javax.swing.*;
+import java.awt.Color;
+import java.awt.Dimension;
+import java.awt.Font;
+import java.awt.GridBagConstraints;
+import java.awt.GridBagLayout;
+import java.awt.GridLayout;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import java.util.Arrays;
+import javax.swing.Box;
+import javax.swing.BoxLayout;
+import javax.swing.JButton;
+import javax.swing.JCheckBox;
+import javax.swing.JLabel;
+import javax.swing.JPanel;
 import javax.swing.border.LineBorder;
 import javax.swing.border.MatteBorder;
-import java.awt.*;
-import java.awt.event.*;
-import java.util.Arrays;
 
-public class InputScreen extends JPanel implements ActionListener{
+public class InputScreen extends JPanel implements ActionListener {
     private JCheckBox[] valueBoxes;
     private final int numberOfVariables;
     private JButton submitButton;
     private JButton backButton;
-    public InputScreen(int numberOfVariables){
-        super();
+
+    public InputScreen(int numberOfVariables) {
         this.numberOfVariables = numberOfVariables;
         this.setBackground(Color.LIGHT_GRAY);
-        this.setBounds(0,0, Constants.WindowConstants.WINDOW_WIDTH, Constants.WindowConstants.WINDOW_HEIGHT);
-        this.setLayout(new BoxLayout(this, BoxLayout.X_AXIS));
-
-        JPanel choosingPanel = new JPanel(new GridLayout((1<<numberOfVariables) + 1, numberOfVariables+1, 10, 10));
+        this.setBounds(0, 0, WindowConstants.WINDOW_WIDTH, WindowConstants.WINDOW_HEIGHT);
+        this.setLayout(new BoxLayout(this, 0));
+        JPanel choosingPanel = new JPanel(new GridLayout((1 << numberOfVariables) + 1, numberOfVariables + 1, 10, 10));
         choosingPanel.setBackground(Color.WHITE);
-        for (int i = 0; i < numberOfVariables; i++) {
-            char x = 'A';
-            x += (char)i;
-            JLabel charHere = new JLabel(x + "", SwingConstants.CENTER);
+
+        int j;
+        char i;
+        for(j = 0; j < numberOfVariables; ++j) {
+            i = 65;
+            i += (char)j;
+            JLabel charHere = new JLabel("" + i, 0);
             charHere.setBorder(new LineBorder(Color.BLACK));
             choosingPanel.add(charHere);
         }
-        choosingPanel.add(new JLabel("Y", SwingConstants.CENTER));
-        valueBoxes = new JCheckBox[1 << numberOfVariables];
-        // Add binary values to the panel
-        for (int j = 0; j < 1 << numberOfVariables; j++) {
-            for (int i = 0; i < numberOfVariables; i++) {
-                int position = (j >> (numberOfVariables - i - 1)) & 1;
-                JLabel positionValue = new JLabel(position + "", SwingConstants.CENTER);
+
+        choosingPanel.add(new JLabel("Y", 0));
+        this.valueBoxes = new JCheckBox[1 << numberOfVariables];
+
+        for(j = 0; j < 1 << numberOfVariables; ++j) {
+            for(i = 0; i < numberOfVariables; ++i) {
+                int position = j >> numberOfVariables - i - 1 & 1;
+                JLabel positionValue = new JLabel("" + position, 0);
                 positionValue.setBorder(new LineBorder(Color.BLACK));
                 choosingPanel.add(positionValue);
             }
 
-            valueBoxes[j] = new JCheckBox();
+            this.valueBoxes[j] = new JCheckBox();
             JPanel checkboxPanel = new JPanel(new GridBagLayout());
             GridBagConstraints gbc = new GridBagConstraints();
             gbc.gridx = 0;
             gbc.gridy = 0;
-            gbc.weightx = 1;
-            gbc.weighty = 1;
-            gbc.anchor = GridBagConstraints.CENTER;
-            checkboxPanel.add(valueBoxes[j], gbc);
+            gbc.weightx = 1.0;
+            gbc.weighty = 1.0;
+            gbc.anchor = 10;
+            checkboxPanel.add(this.valueBoxes[j], gbc);
             choosingPanel.add(checkboxPanel);
         }
-        choosingPanel.setPreferredSize(new Dimension(Constants.WindowConstants.WINDOW_WIDTH*2/3, Constants.WindowConstants.WINDOW_HEIGHT*3/4));
-        choosingPanel.setMinimumSize(new Dimension(Constants.WindowConstants.WINDOW_WIDTH*2/3, Constants.WindowConstants.WINDOW_HEIGHT*3/4));
-        choosingPanel.setMaximumSize(new Dimension(Constants.WindowConstants.WINDOW_WIDTH*2/3, Constants.WindowConstants.WINDOW_HEIGHT*3/4));
+
+        choosingPanel.setPreferredSize(new Dimension(WindowConstants.WINDOW_WIDTH * 2 / 3, WindowConstants.WINDOW_HEIGHT * 3 / 4));
+        choosingPanel.setMinimumSize(new Dimension(WindowConstants.WINDOW_WIDTH * 2 / 3, WindowConstants.WINDOW_HEIGHT * 3 / 4));
+        choosingPanel.setMaximumSize(new Dimension(WindowConstants.WINDOW_WIDTH * 2 / 3, WindowConstants.WINDOW_HEIGHT * 3 / 4));
         choosingPanel.setBorder(new LineBorder(Color.BLACK));
         choosingPanel.setVisible(true);
         this.add(choosingPanel);
-
-        this.add(Box.createHorizontalStrut(Constants.WindowConstants.WINDOW_WIDTH/10));
-
+        this.add(Box.createHorizontalStrut(WindowConstants.WINDOW_WIDTH / 10));
         JPanel buttonPanel = new JPanel();
-        buttonPanel.setLayout(new BoxLayout(buttonPanel, BoxLayout.Y_AXIS));
+        buttonPanel.setLayout(new BoxLayout(buttonPanel, 1));
         buttonPanel.setBackground(Color.LIGHT_GRAY);
-
-        Dimension buttonSize = new Dimension(Constants.WindowConstants.WINDOW_WIDTH/5, Constants.WindowConstants.WINDOW_HEIGHT/10);
-
-        submitButton = createButton("Submit", buttonSize);
-        submitButton.setAlignmentY(Component.TOP_ALIGNMENT);
-        buttonPanel.add(submitButton);
-
-        buttonPanel.add(Box.createHorizontalStrut(Constants.WindowConstants.WINDOW_HEIGHT/16));
-
-        backButton = createButton("Back", buttonSize);
-        buttonPanel.add(backButton);
-
-        buttonPanel.setPreferredSize(new Dimension(Constants.WindowConstants.WINDOW_WIDTH/5, Constants.WindowConstants.WINDOW_HEIGHT/4));
-        buttonPanel.setMinimumSize(new Dimension(Constants.WindowConstants.WINDOW_WIDTH/5, Constants.WindowConstants.WINDOW_HEIGHT/4));
-        buttonPanel.setMaximumSize(new Dimension(Constants.WindowConstants.WINDOW_WIDTH/5, WindowConstants.WINDOW_HEIGHT/4));
-
+        Dimension buttonSize = new Dimension(WindowConstants.WINDOW_WIDTH / 5, WindowConstants.WINDOW_HEIGHT / 10);
+        this.submitButton = this.createButton("Submit", buttonSize);
+        this.submitButton.setAlignmentY(0.0F);
+        buttonPanel.add(this.submitButton);
+        buttonPanel.add(Box.createHorizontalStrut(WindowConstants.WINDOW_HEIGHT / 16));
+        this.backButton = this.createButton("Back", buttonSize);
+        buttonPanel.add(this.backButton);
+        buttonPanel.setPreferredSize(new Dimension(WindowConstants.WINDOW_WIDTH / 5, WindowConstants.WINDOW_HEIGHT / 4));
+        buttonPanel.setMinimumSize(new Dimension(WindowConstants.WINDOW_WIDTH / 5, WindowConstants.WINDOW_HEIGHT / 4));
+        buttonPanel.setMaximumSize(new Dimension(WindowConstants.WINDOW_WIDTH / 5, WindowConstants.WINDOW_HEIGHT / 4));
         buttonPanel.setVisible(true);
         this.add(buttonPanel);
-
         this.setVisible(true);
-
     }
 
-    //Create button given text and size
     private JButton createButton(String text, Dimension size) {
         JButton button = new JButton(text);
-        button.setAlignmentX(Component.CENTER_ALIGNMENT);
-        button.setFont(new Font("Arial", Font.PLAIN, 30));
+        button.setAlignmentX(0.5F);
+        button.setFont(new Font("Arial", 0, 30));
         button.setFocusable(false);
         button.setMinimumSize(size);
         button.setMaximumSize(size);
@@ -103,30 +106,33 @@ public class InputScreen extends JPanel implements ActionListener{
         return button;
     }
 
-    @Override
     public void actionPerformed(ActionEvent e) {
-        if(e.getSource() == backButton){
+        if (e.getSource() == this.backButton) {
             Transition.transitionToMainMenu(this);
-        }
-        else if(e.getSource() == submitButton){
+        } else if (e.getSource() == this.submitButton) {
             int numOfVals = 0;
-            for(int i = 0; i < valueBoxes.length; i++){
-                if(valueBoxes[i].isSelected()){
-                    numOfVals++;
+
+            for(int i = 0; i < this.valueBoxes.length; ++i) {
+                if (this.valueBoxes[i].isSelected()) {
+                    ++numOfVals;
                 }
             }
+
             int[] values = new int[numOfVals];
             int index = 0;
-            for(int i = 0; i < valueBoxes.length; i++){
-                if(valueBoxes[i].isSelected()){
+
+            for(int i = 0; i < this.valueBoxes.length; ++i) {
+                if (this.valueBoxes[i].isSelected()) {
                     values[index] = i;
-                    index++;
+                    ++index;
                 }
             }
+
             System.out.println(Arrays.toString(values));
             Transition.values = values;
             new CalculateStyle();
-            Transition.transitionToOutputScreen(this, numberOfVariables);
+            Transition.transitionToOutputScreen(this, this.numberOfVariables);
         }
+
     }
 }

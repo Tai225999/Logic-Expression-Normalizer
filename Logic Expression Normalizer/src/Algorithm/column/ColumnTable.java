@@ -34,18 +34,6 @@ public class ColumnTable {
         return columnList.size();
     }
 
-    public int getMaxLines(){
-        int maxSum = 0, sum = 0;
-        for(int i = 0; i < columnList.size(); i++){
-            sum = 0;
-            for(int j = 0; j < columnList.get(i).getTable().size(); j++){
-                sum += columnList.get(i).getTable().get(j).size();
-            }
-            if(sum >= maxSum) maxSum = sum;
-        }
-        return maxSum;
-    }
-
     public List<Column> getColumnList() {
         return columnList;
     }

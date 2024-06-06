@@ -1,209 +1,200 @@
 package UI;
 
+import Algorithm.Minterm;
+import Algorithm.QuinneMcCluskey;
+import Algorithm.column.Column;
 import Algorithm.column.ColumnTable;
 import Constants.WindowConstants;
-
-import javax.swing.*;
-import javax.swing.border.MatteBorder;
-import java.awt.*;
+import java.awt.BorderLayout;
+import java.awt.Color;
+import java.awt.Dimension;
+import java.awt.FlowLayout;
+import java.awt.Font;
+import java.awt.LayoutManager;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import Algorithm.column.Column;
-import Algorithm.Minterm;
-
+import java.util.Iterator;
 import java.util.List;
+import javax.swing.*;
+import javax.swing.border.LineBorder;
+import javax.swing.border.MatteBorder;
 
 public class OutputScreen extends JPanel implements ActionListener {
-
-    public OutputScreen(ColumnTable columns) {
-        this.setLayout(null);
+    public OutputScreen(QuinneMcCluskey session, ColumnTable columns, boolean calculateStyle) {
+        this.setLayout((LayoutManager)null);
         this.setBackground(Color.GRAY);
         this.setBounds(0, 0, WindowConstants.WINDOW_WIDTH, WindowConstants.WINDOW_HEIGHT);
-
-        //Add the title label to the output panel. which should be in the center of the horizontal line
-        JLabel titleLabel = new JLabel("RESULTS", SwingConstants.CENTER);
-        titleLabel.setFont(new Font("Arial", Font.BOLD, 50));
+        JLabel titleLabel = new JLabel("RESULTS", 0);
+        titleLabel.setFont(new Font("Arial", 1, 50));
         titleLabel.setBackground(Color.WHITE);
         titleLabel.setOpaque(true);
-        titleLabel.setBounds(WindowConstants.WINDOW_WIDTH*3/100, WindowConstants.WINDOW_HEIGHT*3/100, WindowConstants.WINDOW_WIDTH*94/100, WindowConstants.WINDOW_HEIGHT*10/100);
+        titleLabel.setBounds(WindowConstants.WINDOW_WIDTH * 3 / 100, WindowConstants.WINDOW_HEIGHT * 3 / 100, WindowConstants.WINDOW_WIDTH * 94 / 100, WindowConstants.WINDOW_HEIGHT * 10 / 100);
         titleLabel.setBorder(new MatteBorder(5, 5, 5, 5, Color.BLACK));
         this.add(titleLabel);
-
-        //Add the first sub-panel of the output panel, which is the column table.
         JPanel columnTablePanel = new JPanel();
-        columnTablePanel.setLayout(new FlowLayout());
+        FlowLayout layout = new FlowLayout( 1, 30, 0);
+        layout.setAlignOnBaseline(true);
+        columnTablePanel.setLayout(layout);
         columnTablePanel.setBackground(Color.WHITE);
-        columnTablePanel.setPreferredSize(new Dimension(WindowConstants.WINDOW_WIDTH*7/12, WindowConstants.WINDOW_HEIGHT*7/12));
-        columnTablePanel.setBounds(WindowConstants.WINDOW_WIDTH*3/100, WindowConstants.WINDOW_HEIGHT*15/100, WindowConstants.WINDOW_WIDTH*7/12, WindowConstants.WINDOW_HEIGHT*7/12);
-        columnTablePanel.setBorder(new MatteBorder(5, 5, 5, 5, Color.BLACK));
-
-        if(columns.getPrimeImplicants().isEmpty()){
+        int columnTablePanelWidth = (columns.getNumOfColumns() >=4 ) ? WindowConstants.WINDOW_WIDTH/2*(columns.getNumOfColumns()-2) : WindowConstants.WINDOW_WIDTH * 13 / 24;
+        int columnTablePanelHeight = Math.max(WindowConstants.WINDOW_HEIGHT*13/24, WindowConstants.WINDOW_HEIGHT * 13 * columns.getMaxLines() / 480);
+        columnTablePanel.setPreferredSize(new Dimension(columnTablePanelWidth, columnTablePanelHeight));
+        columnTablePanel.setBounds(WindowConstants.WINDOW_WIDTH * 3 / 100, WindowConstants.WINDOW_HEIGHT * 15 / 100, WindowConstants.WINDOW_WIDTH * 10 / 12, WindowConstants.WINDOW_HEIGHT * 10 / 12);
+        JPanel rowPanel;
+        JLabel leftLabel;
+        if (session.getFinalPIs().isEmpty()) {
             JLabel emptyLabel = new JLabel("No prime implicants found");
-            emptyLabel.setFont(new Font("Arial", Font.ITALIC, 30));
+            emptyLabel.setFont(new Font("Arial", 2, 30));
             columnTablePanel.add(emptyLabel);
             this.add(columnTablePanel);
-        }
-        else {
+        } else {
             int numberOfColumns = columns.getColumnList().size();
             JPanel[] columnPanels = new JPanel[numberOfColumns];
-            for (int i = 0; i < numberOfColumns; i++) {
+            int columnPanelWidth = columnTablePanelWidth / (numberOfColumns + 1);
+            int columnPanelHeight = columnTablePanelHeight;
+            for(int i = 0; i < numberOfColumns; ++i) {
                 columnPanels[i] = new JPanel();
-                columnPanels[i].setLayout(new BoxLayout(columnPanels[i], BoxLayout.Y_AXIS));
+                columnPanels[i].setLayout(new BoxLayout(columnPanels[i], 1));
                 columnPanels[i].setBackground(Color.WHITE);
-                columnPanels[i].setPreferredSize(new Dimension(columnTablePanel.getWidth() / 4, columnTablePanel.getHeight() * 9 / 10));
-                columnPanels[i].setMinimumSize(new Dimension(columnTablePanel.getWidth() / 4, columnTablePanel.getHeight() * 9 / 10));
-                columnPanels[i].setMaximumSize(new Dimension(columnTablePanel.getWidth() / 4, columnTablePanel.getHeight() * 9 / 10));
+                columnPanels[i].setPreferredSize(new Dimension(columnPanelWidth, columnPanelHeight));
+                columnPanels[i].setMinimumSize(new Dimension(columnPanelWidth, columnPanelHeight));
+                columnPanels[i].setMaximumSize(new Dimension(columnPanelWidth, columnPanelHeight));
 
-                JLabel columnTitleLabel = new JLabel("Column " + (i + 1), SwingConstants.CENTER);
-                columnTitleLabel.setFont(new Font("Arial", Font.BOLD, 30));
-
-                // Create a new JPanel with FlowLayout and add the columnTitleLabel to it
-                JPanel titlePanel = new JPanel(new FlowLayout(FlowLayout.CENTER, 100, 0));
-                titlePanel.setBackground(Color.WHITE);
-                titlePanel.add(columnTitleLabel);
-                // Set the size of the titlePanel to be fixed
-                titlePanel.setPreferredSize(new Dimension(columnTablePanel.getWidth() / 4, 50));
-                titlePanel.setMinimumSize(new Dimension(columnTablePanel.getWidth() / 4, 50));
-                titlePanel.setMaximumSize(new Dimension(columnTablePanel.getWidth() / 4, 50));
-
-                // Add the titlePanel to columnPanels[i]
-                columnPanels[i].add(titlePanel);
-
-                Column column = columns.getColumnList().get(i);
+                JLabel columnTitleLabel = new JLabel("Column " + (i + 1), 0);
+                columnTitleLabel.setFont(new Font("Arial", 1, 15));
+                JPanel columnTitlePanel = new JPanel(new FlowLayout(1));
+                columnTitlePanel.setBackground(Color.WHITE);
+                columnTitlePanel.add(columnTitleLabel);
+                columnTitlePanel.setPreferredSize(new Dimension(columnPanelWidth, 20));
+                columnTitlePanel.setMinimumSize(new Dimension(columnPanelWidth, 20));
+                columnTitlePanel.setMaximumSize(new Dimension(columnPanelWidth, 20));
+                columnTitlePanel.setVisible(true);
+                columnPanels[i].add(columnTitlePanel);
+                Column column = (Column)columns.getColumnList().get(i);
                 List<List<Minterm>> currColumn = column.getTable();
-                for (int j = 0; j < currColumn.size(); j++) {
-                    JPanel rowPanel = new JPanel();
-                    rowPanel.setLayout(new BoxLayout(rowPanel, BoxLayout.Y_AXIS));
+                System.out.println(currColumn);
+
+                for(int j = 0; j < currColumn.size(); ++j) {
+                    rowPanel = new JPanel();
+                    rowPanel.setLayout(new BoxLayout(rowPanel, 1));
                     rowPanel.setBackground(Color.WHITE);
-
-                    // Set the size of the rowPanel to match the width of the columnPanels
                     int rowHeight;
-                    if (currColumn.get(j).isEmpty()) {
-                        rowHeight = columnPanels[i].getPreferredSize().height / 10;
-                        JLabel emptyLabel = new JLabel("Empty");
-                        emptyLabel.setFont(new Font("Arial", Font.ITALIC, 20));
-
-                        // Create a new JPanel with FlowLayout and add the emptyLabel to it
-                        JPanel emptyPanel = new JPanel(new FlowLayout());
-                        emptyPanel.setBackground(Color.WHITE);
-                        emptyPanel.add(emptyLabel);
-
-                        // Add the emptyPanel to rowPanel
-                        rowPanel.add(emptyPanel);
-                    } else {
-                        rowHeight = columnPanels[i].getPreferredSize().height / currColumn.size();
-                    }
-                    rowPanel.setPreferredSize(new Dimension(columnPanels[i].getPreferredSize().width, rowHeight));
-                    rowPanel.setMinimumSize(new Dimension(columnPanels[i].getMinimumSize().width, rowHeight));
-                    rowPanel.setMaximumSize(new Dimension(columnPanels[i].getMaximumSize().width, rowHeight));
-                    for (int k = 0; k < currColumn.get(j).size(); k++) {
-                        JPanel innerPanel = new JPanel(new BorderLayout());
+                    JPanel innerPanel;
+                    if (((List)currColumn.get(j)).isEmpty()) {
+                        rowHeight = 20;
+                        leftLabel = new JLabel("Empty");
+                        leftLabel.setFont(new Font("Arial", 2, 10));
+                        innerPanel = new JPanel(new FlowLayout());
                         innerPanel.setBackground(Color.WHITE);
+                        innerPanel.add(leftLabel);
+                        rowPanel.add(innerPanel);
+                    } else {
+                        rowHeight = 20 * currColumn.get(j).size();
+                    }
 
-                        JLabel mintermLabel = new JLabel(currColumn.get(j).get(k).getValues().toString());
-                        mintermLabel.setFont(new Font("Arial", Font.PLAIN, 18));
-                        innerPanel.add(mintermLabel, BorderLayout.WEST);
+                    rowPanel.setPreferredSize(new Dimension(columnPanelWidth, rowHeight));
+                    rowPanel.setMinimumSize(new Dimension(columnPanelWidth, rowHeight));
+                    rowPanel.setMaximumSize(new Dimension(columnPanelWidth, rowHeight));
 
-                        JLabel binaryLabel = new JLabel(currColumn.get(j).get(k).getBinaryRepresentation());
-                        binaryLabel.setFont(new Font("Arial", Font.PLAIN, 18));
-                        innerPanel.add(binaryLabel, BorderLayout.EAST);
-
+                    for(int k = 0; k < ((List)currColumn.get(j)).size(); ++k) {
+                        Minterm curr = currColumn.get(j).get(k);
+                        innerPanel = new JPanel(new BorderLayout());
+                        innerPanel.setBackground(Color.WHITE);
+                        JLabel mintermLabel = new JLabel(curr.getValues().toString());
+                        mintermLabel.setFont(new Font("Arial", 0, 11));
+                        if(session.getFinalPIs().contains(curr)) mintermLabel.setForeground(Color.RED);
+                        innerPanel.add(mintermLabel, "West");
+                        JLabel binaryLabel = new JLabel(curr.getBooleanRepresentation());
+                        if(session.getFinalPIs().contains(curr)) binaryLabel.setForeground(Color.RED);
+                        binaryLabel.setFont(new Font("Arial", 0, 11));
+                        innerPanel.add(binaryLabel, "East");
+                        innerPanel.setPreferredSize(new Dimension(columnPanelWidth, 20));
                         rowPanel.add(innerPanel);
                     }
 
-                    rowPanel.setBorder(new MatteBorder(5, 0, 0, 0, Color.BLACK));
+                    rowPanel.setBorder(new MatteBorder(2, 0, 0, 0, Color.BLACK));
                     rowPanel.setVisible(true);
                     columnPanels[i].add(rowPanel);
                 }
+
                 columnPanels[i].setVisible(true);
                 columnTablePanel.add(columnPanels[i]);
             }
         }
-        columnTablePanel.setVisible(true);
-        this.add(columnTablePanel);
 
-        //Add the second sub-panel of the output panel, which is the prime Implicants table.
-        //This panel should be directly to the right of the first panel
-        //The table should have a title, and a list of prime implicants, each row containing the prime implicant's integer set, its binary representation and its boolean representation
+        System.out.println(session.getFinalPIs());
+
+        columnTablePanel.setVisible(true);
+        JScrollPane columnScrollPane = new JScrollPane(columnTablePanel);
+        columnScrollPane.setBounds(WindowConstants.WINDOW_WIDTH * 3 / 100, WindowConstants.WINDOW_HEIGHT * 15 / 100, WindowConstants.WINDOW_WIDTH * 7 / 12, WindowConstants.WINDOW_HEIGHT * 7 / 12);
+        columnScrollPane.setPreferredSize(new Dimension(WindowConstants.WINDOW_WIDTH * 7 / 12, WindowConstants.WINDOW_HEIGHT * 7 / 12));
+        columnScrollPane.setMinimumSize(new Dimension(WindowConstants.WINDOW_WIDTH * 7 / 12, WindowConstants.WINDOW_HEIGHT * 7 / 12));
+        columnScrollPane.setMaximumSize(new Dimension(WindowConstants.WINDOW_WIDTH * 7 / 12, WindowConstants.WINDOW_HEIGHT * 7 / 12));
+        columnScrollPane.setBorder(new MatteBorder(5, 5, 5, 5, Color.BLACK));
+        columnScrollPane.setVisible(true);
+        this.add(columnScrollPane);
         JPanel primeImplicantsPanel = new JPanel();
         primeImplicantsPanel.setLayout(new BorderLayout());
         primeImplicantsPanel.setBackground(Color.WHITE);
-        primeImplicantsPanel.setBounds(WindowConstants.WINDOW_WIDTH*65/100, WindowConstants.WINDOW_HEIGHT*15/100, WindowConstants.WINDOW_WIDTH*32/100, WindowConstants.WINDOW_HEIGHT*7/12);
+        primeImplicantsPanel.setBounds(WindowConstants.WINDOW_WIDTH * 65 / 100, WindowConstants.WINDOW_HEIGHT * 15 / 100, WindowConstants.WINDOW_WIDTH * 32 / 100, WindowConstants.WINDOW_HEIGHT * 7 / 12);
         primeImplicantsPanel.setBorder(new MatteBorder(5, 5, 5, 5, Color.BLACK));
-
-        primeImplicantsPanel.setPreferredSize(new Dimension(WindowConstants.WINDOW_WIDTH*32/100, WindowConstants.WINDOW_HEIGHT*7/12));
-        primeImplicantsPanel.setMinimumSize(new Dimension(WindowConstants.WINDOW_WIDTH*32/100, WindowConstants.WINDOW_HEIGHT*7/12));
-        primeImplicantsPanel.setMaximumSize(new Dimension(WindowConstants.WINDOW_WIDTH*32/100, WindowConstants.WINDOW_HEIGHT*7/12));
-
-        JLabel primeImplicantsLabel = new JLabel("Prime Implicants Table", SwingConstants.CENTER);
-        primeImplicantsLabel.setFont(new Font("Arial", Font.BOLD, 30));
-        primeImplicantsPanel.add(primeImplicantsLabel, BorderLayout.NORTH);
-
-        String[] columnNames = {"Integer Set", "Binary Representation", "Boolean Representation"};
-        List<Minterm> primeImplicants = columns.getPrimeImplicants();
-
+        primeImplicantsPanel.setPreferredSize(new Dimension(WindowConstants.WINDOW_WIDTH * 32 / 100, WindowConstants.WINDOW_HEIGHT * 7 / 12));
+        primeImplicantsPanel.setMinimumSize(new Dimension(WindowConstants.WINDOW_WIDTH * 32 / 100, WindowConstants.WINDOW_HEIGHT * 7 / 12));
+        primeImplicantsPanel.setMaximumSize(new Dimension(WindowConstants.WINDOW_WIDTH * 32 / 100, WindowConstants.WINDOW_HEIGHT * 7 / 12));
+        JLabel primeImplicantsLabel = new JLabel("Prime Implicants Table", 0);
+        primeImplicantsLabel.setFont(new Font("Arial", 1, 15));
+        primeImplicantsPanel.add(primeImplicantsLabel, "North");
+        String[] columnNames = new String[]{"Integer Set", "Binary Representation", "Boolean Representation"};
+        List<Minterm> primeImplicants = session.getFinalPIs();
         Object[][] data = new Object[primeImplicants.size()][3];
-        for (int i = 0; i < primeImplicants.size(); i++) {
-            Minterm pi = primeImplicants.get(i);
+
+        for(int i = 0; i < primeImplicants.size(); ++i) {
+            Minterm pi = (Minterm)primeImplicants.get(i);
             data[i][0] = pi.getValues().toString();
             data[i][1] = pi.getBinaryRepresentation();
             data[i][2] = pi.getBooleanRepresentation();
         }
 
         JTable table = new JTable(data, columnNames);
-        table.setFont(new Font("Arial", Font.PLAIN, 20));
+        table.setFont(new Font("Arial", 0, 10));
         table.setRowHeight(30);
-
         JScrollPane scrollPane = new JScrollPane(table);
-        scrollPane.setPreferredSize(new Dimension(WindowConstants.WINDOW_WIDTH*32/100, WindowConstants.WINDOW_HEIGHT*7/12));
-        scrollPane.setMinimumSize(new Dimension(WindowConstants.WINDOW_WIDTH*32/100, WindowConstants.WINDOW_HEIGHT*7/12));
-        scrollPane.setMaximumSize(new Dimension(WindowConstants.WINDOW_WIDTH*32/100, WindowConstants.WINDOW_HEIGHT*7/12));
-
-        primeImplicantsPanel.add(scrollPane, BorderLayout.CENTER);
-
+        scrollPane.setPreferredSize(new Dimension(WindowConstants.WINDOW_WIDTH * 32 / 100, WindowConstants.WINDOW_HEIGHT * 7 / 12));
+        scrollPane.setMinimumSize(new Dimension(WindowConstants.WINDOW_WIDTH * 32 / 100, WindowConstants.WINDOW_HEIGHT * 7 / 12));
+        scrollPane.setMaximumSize(new Dimension(WindowConstants.WINDOW_WIDTH * 32 / 100, WindowConstants.WINDOW_HEIGHT * 7 / 12));
+        primeImplicantsPanel.add(scrollPane, "Center");
         this.add(primeImplicantsPanel);
-
-        //Add the final Expression panel, which is directly below the first panel
-        JPanel finalExpressionPanel = new JPanel();
-        finalExpressionPanel.setLayout(new BorderLayout());
-        finalExpressionPanel.setBackground(Color.WHITE);
-        finalExpressionPanel.setBounds(WindowConstants.WINDOW_WIDTH*3/100, WindowConstants.WINDOW_HEIGHT*77/100, WindowConstants.WINDOW_WIDTH*7/12, WindowConstants.WINDOW_HEIGHT*15/100);
-        finalExpressionPanel.setBorder(new MatteBorder(5, 5, 5, 5, Color.BLACK));
-
+        rowPanel = new JPanel();
+        rowPanel.setLayout(new BorderLayout());
+        rowPanel.setBackground(Color.WHITE);
+        rowPanel.setBounds(WindowConstants.WINDOW_WIDTH * 3 / 100, WindowConstants.WINDOW_HEIGHT * 77 / 100, WindowConstants.WINDOW_WIDTH * 7 / 12, WindowConstants.WINDOW_HEIGHT * 15 / 100);
+        rowPanel.setBorder(new MatteBorder(5, 5, 5, 5, Color.BLACK));
         String finalExpression = "Y = ";
-        if(columns.getPrimeImplicants().isEmpty()){
-            finalExpression += "0";
-        }
-        for (Minterm pi : columns.getPrimeImplicants()) {
-            finalExpression += pi.getBooleanRepresentation() + " + ";
-        }
 
-        JLabel leftLabel = new JLabel("Final Expression: ");
-        leftLabel.setFont(new Font("Arial", Font.BOLD, 30));
-        finalExpressionPanel.add(leftLabel, BorderLayout.WEST);
+        finalExpression += (calculateStyle) ? QuinneMcCluskey.toExpression(session.getFinalPIs()) : QuinneMcCluskey.convertToComplementForm(QuinneMcCluskey.toExpression(session.getFinalPIs()));
 
-        JLabel finalExpressionLabel = new JLabel(finalExpression.substring(0, finalExpression.length() - 3));
-        finalExpressionLabel.setFont(new Font("Arial", Font.BOLD, 30));
-        finalExpressionPanel.add(finalExpressionLabel, BorderLayout.CENTER);
-        this.add(finalExpressionPanel);
-
-        //Add the return button, which is directly below the second panel
+        leftLabel = new JLabel("Final Expression: ");
+        leftLabel.setFont(new Font("Arial", 1, 15));
+        rowPanel.add(leftLabel, "West");
+        JLabel finalExpressionLabel = new JLabel(finalExpression);
+        finalExpressionLabel.setFont(new Font("Arial", 1, 15));
+        rowPanel.add(finalExpressionLabel, "Center");
+        this.add(rowPanel);
         JButton returnButton = new JButton("Return");
-        returnButton.setFont(new Font("Arial", Font.BOLD, 40));
+        returnButton.setFont(new Font("Arial", 1, 40));
         returnButton.setBackground(Color.LIGHT_GRAY);
-        returnButton.setBounds(WindowConstants.WINDOW_WIDTH*65/100, WindowConstants.WINDOW_HEIGHT*77/100, WindowConstants.WINDOW_WIDTH*32/100, WindowConstants.WINDOW_HEIGHT*15/100);
+        returnButton.setBounds(WindowConstants.WINDOW_WIDTH * 65 / 100, WindowConstants.WINDOW_HEIGHT * 77 / 100, WindowConstants.WINDOW_WIDTH * 32 / 100, WindowConstants.WINDOW_HEIGHT * 15 / 100);
         returnButton.setBorder(new MatteBorder(5, 5, 5, 5, Color.BLACK));
         returnButton.addActionListener(this);
         this.add(returnButton);
-
         this.setVisible(true);
     }
 
-    @Override
     public void actionPerformed(ActionEvent e) {
         if (e.getActionCommand().equals("Return")) {
             this.setVisible(false);
             Transition.transitionToMainMenu(this);
         }
+
     }
 }
