@@ -1,4 +1,4 @@
-package Algorithm.column;
+package algorithm.column;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -7,7 +7,7 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Set;
 
-import Algorithm.Minterm;
+import algorithm.Minterm;
 
 public class ColumnTable {
     private int numOfBits;
@@ -101,5 +101,17 @@ public class ColumnTable {
                 return Integer.compare(set1.size(), set2.size());
             }
         });
+    }
+
+    public List<Minterm> getPrimeImplicantsFromEachColumn() {
+        List<Minterm> primeImplicants = new ArrayList<Minterm>();
+        for (Column column : columnList) {
+            for(Minterm minterm : column.getTempPrimeImplicants()) {
+                if(!primeImplicants.contains(minterm))
+                primeImplicants.add(minterm);
+            }
+        }
+
+        return primeImplicants;
     }
 }

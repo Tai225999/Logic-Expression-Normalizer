@@ -1,6 +1,6 @@
-package Algorithm.pitable;
+package algorithm.pitable;
 
-import Algorithm.Minterm;
+import algorithm.Minterm;
 
 import java.util.ArrayList;
 import java.util.HashSet;

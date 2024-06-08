@@ -85,8 +85,10 @@ public class MainMenu extends JPanel implements ActionListener {
         } else if (e.getSource() == this.descriptionButton) {
             new DescriptionPanel();
         } else if (e.getSource() == this.threeVariableExpressionButton) {
+            Transition.numberOfVariables = 3;
             Transition.transitionToInputScreen(3, this);
         } else if (e.getSource() == this.fourVariableExpressionButton) {
+            Transition.numberOfVariables = 4;
             Transition.transitionToInputScreen(4, this);
         }
 

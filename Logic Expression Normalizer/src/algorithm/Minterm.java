@@ -1,8 +1,6 @@
-package Algorithm;
+package algorithm;
 
-import java.util.HashSet;
-import java.util.Iterator;
-import java.util.Set;
+import java.util.*;
 
 public class Minterm {
     private Set<Integer> values;
@@ -87,5 +85,16 @@ public class Minterm {
         }
         sb.append(")");
         return sb.toString();
+    }
+
+    public List<Integer> getPositionOfBinaries() {
+        List<Integer> position = new ArrayList<>();
+        for (int i = 0; i < binaryRepresentation.length(); i++) {
+            if (binaryRepresentation.charAt(i) != '-') {
+                position.add(i);
+            }
+        }
+
+        return position;
     }
 }

@@ -1,7 +1,7 @@
-package Algorithm;
+package algorithm;
 
-import Algorithm.column.ColumnTable;
-import Algorithm.pitable.PITable;
+import algorithm.column.ColumnTable;
+import algorithm.pitable.PITable;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.Iterator;

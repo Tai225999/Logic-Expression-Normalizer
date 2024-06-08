@@ -1,6 +1,6 @@
-package Algorithm.column;
+package algorithm.column;
 
-import Algorithm.Minterm;
+import algorithm.Minterm;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.Iterator;
