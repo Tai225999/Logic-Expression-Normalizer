@@ -105,7 +105,12 @@ public class OutputScreen extends JPanel implements ActionListener {
             data[i][2] = pi.getBooleanRepresentation();
         }
 
-        JTable table = new JTable(data, columnNames);
+        JTable table = new JTable(data, columnNames){
+            @Override
+            public boolean isCellEditable(int row, int column) {
+                return false;
+            }
+        };
         table.setFont(new Font("Arial", 0, 13));
         table.setRowHeight(30);
         JScrollPane scrollPane = new JScrollPane(table);
@@ -133,7 +138,12 @@ public class OutputScreen extends JPanel implements ActionListener {
 
         int numOfRows = pIList.size();
         int numOfColumns = (int)Math.pow(2, Transition.numberOfVariables) + 1;
-        JTable table = new JTable(numOfRows, numOfColumns);
+        JTable table = new JTable(numOfRows, numOfColumns){
+            @Override
+            public boolean isCellEditable(int row, int column) {
+                return false;
+            }
+        };
         table.setFont(new Font("Arial", 0, 13));
         table.setRowHeight(20);
         table.getColumnModel().getColumn(0).setPreferredWidth(Integer.MAX_VALUE);
@@ -156,6 +166,8 @@ public class OutputScreen extends JPanel implements ActionListener {
                 }
             }
         }
+
+        table.setFocusable(false);
 
         JScrollPane scrollPane = new JScrollPane(table);
         scrollPane.setPreferredSize(new Dimension(WindowConstants.WINDOW_WIDTH * 32 / 100, WindowConstants.WINDOW_HEIGHT * 7 / 24));
@@ -240,7 +252,7 @@ public class OutputScreen extends JPanel implements ActionListener {
                         mintermLabel.setFont(new Font("Arial", 0, 11));
                         if(!columns.getPrimeImplicantsFromEachColumn().contains(curr)) mintermLabel.setForeground(Color.RED);
                         innerPanel.add(mintermLabel, "West");
-                        JLabel binaryLabel = new JLabel(curr.getBooleanRepresentation());
+                        JLabel binaryLabel = new JLabel(curr.getBinaryRepresentation());
                         if(!columns.getPrimeImplicantsFromEachColumn().contains(curr)) binaryLabel.setForeground(Color.RED);
                         binaryLabel.setFont(new Font("Arial", 0, 11));
                         innerPanel.add(binaryLabel, "East");

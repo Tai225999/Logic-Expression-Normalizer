@@ -104,13 +104,17 @@ public class ColumnTable {
     }
 
     public List<Minterm> getPrimeImplicantsFromEachColumn() {
+        System.out.println("Start");
         List<Minterm> primeImplicants = new ArrayList<Minterm>();
         for (Column column : columnList) {
-            for(Minterm minterm : column.getTempPrimeImplicants()) {
-                if(!primeImplicants.contains(minterm))
-                primeImplicants.add(minterm);
+            for(List<Minterm> mintermList : column.getTable()) {
+                for (Minterm minterm : mintermList) {
+                    if(column.getTempPrimeImplicants().contains(minterm))
+                        primeImplicants.add(minterm);
+                }
             }
         }
+        System.out.println("End");
 
         return primeImplicants;
     }
