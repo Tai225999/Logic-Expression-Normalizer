@@ -41,7 +41,7 @@ public class LogicCircuitDiagram extends JFrame {
                 // Convert the Graphics object to a Graphics2D object
                 Graphics2D g2d = (Graphics2D) g;
                 // Draw the logic circuit diagram
-                BufferedImage logicCircuitDiagram = draw_logic_circuit();
+                BufferedImage logicCircuitDiagram = drawLogicCircuit();
                 g2d.drawImage(logicCircuitDiagram, 0, 0, this);
             }
         };
@@ -54,7 +54,7 @@ public class LogicCircuitDiagram extends JFrame {
         saveButton.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                BufferedImage logicCircuitDiagram = draw_logic_circuit();
+                BufferedImage logicCircuitDiagram = drawLogicCircuit();
                 JFileChooser fileChooser = new JFileChooser();
                 fileChooser.setDialogTitle("Specify a file to save");
 
@@ -94,21 +94,12 @@ public class LogicCircuitDiagram extends JFrame {
         this.setVisible(true);
     }
 
-    private BufferedImage draw_logic_circuit() {
+    private BufferedImage drawLogicCircuit() {
         double DISTANCE_BETWEEN_COLUMN = 25;
         double DISTANCE_BETWEEN_ROW = 25, DISTANCE_BETWEEN_ROW_GROUP = 60, DOT_SIZE = 7, ARROWHEAD_SIZEX = 12, ARROWHEAD_SIZEY = 7;
 
-        double imageHeight = 0, imageWidth = 0;
-
-        // Calculate the image height and width
-        imageHeight += 150;
-        imageHeight += (mintermList.size()-1)*DISTANCE_BETWEEN_ROW_GROUP;
-        for (Minterm minterm: mintermList) {
-            System.out.println(minterm.getPositionOfBinaries() + " " + minterm.getBinaryRepresentation());
-            imageHeight += (minterm.getPositionOfBinaries().size()-1)*DISTANCE_BETWEEN_ROW;
-        }
-        imageWidth += numberOfVariables*2*DISTANCE_BETWEEN_COLUMN;
-        imageWidth += 300;
+        double imageHeight = calculateImageHeight(DISTANCE_BETWEEN_ROW, DISTANCE_BETWEEN_ROW_GROUP);
+        double imageWidth = calculateImageWidth(DISTANCE_BETWEEN_COLUMN);
 
         // Create a new BufferedImage object with the calculated height and width
         BufferedImage ret = new BufferedImage((int) imageWidth, (int) imageHeight, BufferedImage.TYPE_3BYTE_BGR);
@@ -122,7 +113,32 @@ public class LogicCircuitDiagram extends JFrame {
         g2d.setFont(new Font("TimesRoman", Font.BOLD, 20));
 
         // Draw the logic circuit diagram
-        // Draw the input variables
+        drawInputVariables(g2d, DISTANCE_BETWEEN_COLUMN, imageHeight);
+        drawLogicGates(g2d, imageHeight, DISTANCE_BETWEEN_ROW, imageWidth, ARROWHEAD_SIZEX, ARROWHEAD_SIZEY);
+        drawMinterms(g2d, DISTANCE_BETWEEN_COLUMN, DISTANCE_BETWEEN_ROW, DISTANCE_BETWEEN_ROW_GROUP, DOT_SIZE, imageWidth, imageHeight);
+
+        this.setSize((int) imageWidth, (int) imageHeight * 11 / 10);
+
+        return ret;
+    }
+
+    private double calculateImageHeight(double DISTANCE_BETWEEN_ROW, double DISTANCE_BETWEEN_ROW_GROUP) {
+        double imageHeight = 150;
+        imageHeight += (mintermList.size()-1)*DISTANCE_BETWEEN_ROW_GROUP;
+        for (Minterm minterm: mintermList) {
+            System.out.println(minterm.getPositionOfBinaries() + " " + minterm.getBinaryRepresentation());
+            imageHeight += (minterm.getPositionOfBinaries().size()-1)*DISTANCE_BETWEEN_ROW;
+        }
+        return imageHeight;
+    }
+
+    private double calculateImageWidth(double DISTANCE_BETWEEN_COLUMN) {
+        double imageWidth = numberOfVariables*2*DISTANCE_BETWEEN_COLUMN;
+        imageWidth += 300;
+        return imageWidth;
+    }
+
+    private void drawInputVariables(Graphics2D g2d, double DISTANCE_BETWEEN_COLUMN, double imageHeight) {
         for(int i = 0; i < 2*numberOfVariables; i++) {
             g2d.draw(new Line2D.Double(DISTANCE_BETWEEN_COLUMN*(i+1), 50, DISTANCE_BETWEEN_COLUMN*(i+1), imageHeight-50));
             if(i%2==1) {
@@ -131,7 +147,9 @@ public class LogicCircuitDiagram extends JFrame {
                 g2d.drawString(String.valueOf((char)('A'+i/2)),(int) DISTANCE_BETWEEN_COLUMN*(i+1)-6, 45);
             }
         }
+    }
 
+    private void drawLogicGates(Graphics2D g2d, double imageHeight, double DISTANCE_BETWEEN_ROW, double imageWidth, double ARROWHEAD_SIZEX, double ARROWHEAD_SIZEY) {
         if(mintermList.size() > 1) {
             if(calculateStyle) {
                 g2d.fill(new ORShape(imageWidth-125, (imageHeight-DISTANCE_BETWEEN_ROW*(mintermList.size()))/2, mintermList.size()));
@@ -144,7 +162,9 @@ public class LogicCircuitDiagram extends JFrame {
 
         g2d.draw(new Line2D.Double(imageWidth-75, imageHeight/2, imageWidth-25, imageHeight/2));
         g2d.fillPolygon(new int[]{(int) (imageWidth-25), (int) (imageWidth-25-ARROWHEAD_SIZEX), (int) (imageWidth-25-ARROWHEAD_SIZEX)},new int[]{(int) (imageHeight/2), (int) (imageHeight/2+ARROWHEAD_SIZEY), (int) (imageHeight/2-ARROWHEAD_SIZEY)},3);
+    }
 
+    private void drawMinterms(Graphics2D g2d, double DISTANCE_BETWEEN_COLUMN, double DISTANCE_BETWEEN_ROW, double DISTANCE_BETWEEN_ROW_GROUP, double DOT_SIZE, double imageWidth, double imageHeight) {
         double currentImageHeight = 75;
         int group = 0;
 
@@ -184,12 +204,6 @@ public class LogicCircuitDiagram extends JFrame {
                 currentImageHeight += DISTANCE_BETWEEN_ROW;
             }
             currentImageHeight += DISTANCE_BETWEEN_ROW_GROUP-DISTANCE_BETWEEN_ROW;
-
         }
-
-        this.setSize((int) imageWidth, (int) imageHeight * 11 / 10);
-
-
-        return ret;
     }
 }
