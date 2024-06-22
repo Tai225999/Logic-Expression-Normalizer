@@ -56,6 +56,7 @@ public class LogicCircuitDiagram extends JFrame {
             public void actionPerformed(ActionEvent e) {
                 BufferedImage logicCircuitDiagram = drawLogicCircuit();
                 JFileChooser fileChooser = new JFileChooser();
+                fileChooser.setCurrentDirectory(new File("src/UI"));
                 fileChooser.setDialogTitle("Specify a file to save");
 
                 int userSelection = fileChooser.showSaveDialog(null);

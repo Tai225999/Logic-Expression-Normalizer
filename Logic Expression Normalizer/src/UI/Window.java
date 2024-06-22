@@ -15,6 +15,7 @@ public class Window extends JFrame {
         this.setLayout((LayoutManager)null);
         this.setResizable(false);
         this.setIconImage((new ImageIcon("src/UI/images.png")).getImage());
+        this.setTitle("Logic Expression Normalizer");
         this.add(panel);
         this.setVisible(true);
     }

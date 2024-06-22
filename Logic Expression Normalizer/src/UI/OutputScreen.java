@@ -91,7 +91,7 @@ public class OutputScreen extends JPanel implements ActionListener {
         makeEquationPanel.setPreferredSize(new Dimension(WindowConstants.WINDOW_WIDTH * 32 / 100, WindowConstants.WINDOW_HEIGHT * 7 / 24));
         makeEquationPanel.setMinimumSize(new Dimension(WindowConstants.WINDOW_WIDTH * 32 / 100, WindowConstants.WINDOW_HEIGHT * 7 / 24));
         makeEquationPanel.setMaximumSize(new Dimension(WindowConstants.WINDOW_WIDTH * 32 / 100, WindowConstants.WINDOW_HEIGHT * 7 / 24));
-        JLabel primeImplicantsLabel = new JLabel("Prime Implicants Table", 0);
+        JLabel primeImplicantsLabel = new JLabel("Make Equation", 0);
         primeImplicantsLabel.setFont(new Font("Arial", 1, 15));
         makeEquationPanel.add(primeImplicantsLabel, "North");
         String[] columnNames = new String[]{"Integer Set", "Binary Representation", "Boolean Representation"};
