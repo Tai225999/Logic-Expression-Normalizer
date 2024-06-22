@@ -20,19 +20,38 @@ public class MainMenu extends JPanel implements ActionListener {
     private JButton exitButton;
 
     public MainMenu() {
+        setupPanel();
+        Box titleBox = createTitleBox();
+        this.add(titleBox);
+        this.add(Box.createVerticalStrut(WindowConstants.WINDOW_HEIGHT / 8));
+        JPanel menuPanel = createMenuPanel();
+        Box box = Box.createHorizontalBox();
+        box.add(Box.createHorizontalGlue());
+        box.add(menuPanel);
+        box.add(Box.createHorizontalGlue());
+        this.add(box);
+        this.setVisible(true);
+    }
+
+    private void setupPanel() {
         this.setSize(WindowConstants.WINDOW_WIDTH, WindowConstants.WINDOW_HEIGHT);
         this.setBounds(0, 0, WindowConstants.WINDOW_WIDTH, WindowConstants.WINDOW_HEIGHT);
         this.setBackground(Color.LIGHT_GRAY);
         this.setLayout(new BoxLayout(this, 1));
         this.add(Box.createVerticalStrut(WindowConstants.WINDOW_HEIGHT / 8));
+    }
+
+    private Box createTitleBox() {
         Box titleBox = Box.createHorizontalBox();
         JLabel title = new JLabel("LOGIC EXPRESSION NORMALIZER");
         title.setFont(new Font("Arial", 1, 50));
         titleBox.add(Box.createHorizontalGlue());
         titleBox.add(title);
         titleBox.add(Box.createHorizontalGlue());
-        this.add(titleBox);
-        this.add(Box.createVerticalStrut(WindowConstants.WINDOW_HEIGHT / 8));
+        return titleBox;
+    }
+
+    private JPanel createMenuPanel() {
         JPanel menuPanel = new JPanel();
         menuPanel.setLayout(new BoxLayout(menuPanel, 1));
         menuPanel.setBackground(Color.WHITE);
@@ -56,12 +75,7 @@ public class MainMenu extends JPanel implements ActionListener {
         menuPanel.add(this.exitButton);
         menuPanel.add(Box.createVerticalStrut(WindowConstants.WINDOW_HEIGHT / 30));
         menuPanel.setBorder(new MatteBorder(5, 5, 5, 5, Color.BLACK));
-        Box box = Box.createHorizontalBox();
-        box.add(Box.createHorizontalGlue());
-        box.add(menuPanel);
-        box.add(Box.createHorizontalGlue());
-        this.add(box);
-        this.setVisible(true);
+        return menuPanel;
     }
 
     private JButton createButton(String text, Dimension size) {
