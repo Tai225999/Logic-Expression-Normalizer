@@ -1,5 +1,5 @@
 
-Github repo for Java Mini-Project of group 23, class ..., semester 20232
+Github repo for Java Mini-Project of group 23, class 147839, semester 20232
 
 ####
 
@@ -12,7 +12,7 @@ Group members:
 ####
 
 
-Demo Link:
+Demo Link: https://youtu.be/n6QRr_Jrahk
 
 ####
 
